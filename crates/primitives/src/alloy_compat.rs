@@ -122,8 +122,15 @@ impl TryFrom<alloy_rpc_types::Transaction> for Transaction {
                             .into(),
                     ))
                 }
-                Ok(Self::Legacy(TxLegacy {
-                    chain_id: tx.chain_id,
+                Ok(Transaction::Legacy(TxLegacy {
+                    chain_id: tx.chain_id.or_else(|| {
+                        tx.signature.and_then(|signature| {
+                            // TODO: make this better, this is needed because sometimes rpc returns
+                            // legacy transactions without a chain id explicitly in the response,
+                            // however it would have a chain id in the signature from eip155
+                            extract_chain_id(signature.v.to()).expect("just dont error").1
+                        })
+                    }),
                     nonce: tx.nonce,
                     gas_price: tx.gas_price.ok_or(ConversionError::MissingGasPrice)?,
                     gas_limit: tx
