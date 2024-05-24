@@ -122,7 +122,7 @@ impl TryFrom<alloy_rpc_types::Transaction> for Transaction {
                             .into(),
                     ))
                 }
-                Ok(Transaction::Legacy(TxLegacy {
+                Ok(Self::Legacy(TxLegacy {
                     chain_id: tx.chain_id.or_else(|| {
                         tx.signature.and_then(|signature| {
                             // TODO: make this better, this is needed because sometimes rpc returns
