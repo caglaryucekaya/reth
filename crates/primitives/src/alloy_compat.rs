@@ -1,8 +1,9 @@
 //! Common conversions from alloy types.
 
 use crate::{
-    transaction::extract_chain_id, Block, Header, Signature, Transaction, TransactionSigned,
-    TransactionSignedEcRecovered, TxEip1559, TxEip2930, TxEip4844, TxLegacy, TxType,
+    constants::EMPTY_TRANSACTIONS, transaction::extract_chain_id, Block, Header, Signature,
+    Transaction, TransactionSigned, TransactionSignedEcRecovered, TxEip1559, TxEip2930, TxEip4844,
+    TxLegacy, TxType,
 };
 use alloy_primitives::TxKind;
 use alloy_rlp::Error as RlpError;
@@ -36,7 +37,13 @@ impl TryFrom<alloy_rpc_types::Block> for Block {
                     .collect(),
                 alloy_rpc_types::BlockTransactions::Hashes(_) |
                 alloy_rpc_types::BlockTransactions::Uncle => {
-                    return Err(ConversionError::MissingFullTransactions)
+                    // alloy deserializes empty blocks into `BlockTransactions::Uncle`, if the tx
+                    // root is the empty root then we can just return an empty vec.
+                    if block.header.transactions_root == EMPTY_TRANSACTIONS {
+                        Ok(vec![])
+                    } else {
+                        Err(ConversionError::MissingFullTransactions)
+                    }
                 }
             };
             transactions?
