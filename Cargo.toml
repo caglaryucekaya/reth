@@ -72,6 +72,7 @@ members = [
     "crates/storage/db/",
     "crates/storage/db-api/",
     "crates/storage/db-common",
+    "crates/storage/db-mdbx",
     "crates/storage/errors/",
     "crates/storage/libmdbx-rs/",
     "crates/storage/libmdbx-rs/mdbx-sys/",
@@ -244,6 +245,7 @@ reth-consensus-common = { path = "crates/consensus/common" }
 reth-db = { path = "crates/storage/db", default-features = false }
 reth-db-api = { path = "crates/storage/db-api" }
 reth-db-common = { path = "crates/storage/db-common" }
+reth-db-mdbx = { path = "crates/storage/db-mdbx" }
 reth-discv4 = { path = "crates/net/discv4" }
 reth-discv5 = { path = "crates/net/discv5" }
 reth-dns-discovery = { path = "crates/net/dns" }
@@ -318,8 +320,14 @@ reth-trie = { path = "crates/trie/trie" }
 reth-trie-parallel = { path = "crates/trie/parallel" }
 
 # revm
-revm = { version = "9.0.0", features = [ "std", "secp256k1", "blst", ], default-features = false }
-revm-primitives = { version = "4.0.0", features = [ "std", ], default-features = false }
+revm = { version = "9.0.0", features = [
+    "std",
+    "secp256k1",
+    "blst",
+], default-features = false }
+revm-primitives = { version = "4.0.0", features = [
+    "std",
+], default-features = false }
 revm-inspectors = { git = "https://github.com/paradigmxyz/evm-inspectors", rev = "421f9e4" }
 
 # eth
