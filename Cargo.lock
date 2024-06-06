@@ -6489,10 +6489,14 @@ dependencies = [
  "proptest-derive",
  "rand 0.8.5",
  "reth-codecs",
+ "reth-fs-util",
  "reth-primitives",
  "reth-storage-errors",
+ "reth-tracing",
  "serde",
  "serde_json",
+ "sysinfo",
+ "tempfile",
  "test-fuzz",
 ]
 
