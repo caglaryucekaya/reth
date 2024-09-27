@@ -3,6 +3,7 @@
 use std::{fmt, io, io::ErrorKind, net::SocketAddr};
 
 use reth_dns_discovery::resolver::ResolveError;
+use reth_ecies::ECIESErrorImpl;
 use reth_eth_wire::{
     errors::{EthHandshakeError, EthStreamError, P2PHandshakeError, P2PStreamError},
     DisconnectReason,
@@ -214,7 +215,19 @@ impl SessionError for PendingSessionHandshakeError {
     fn is_fatal_protocol_error(&self) -> bool {
         match self {
             Self::Eth(eth) => eth.is_fatal_protocol_error(),
-            Self::Ecies(_) => true,
+            Self::Ecies(err) => matches!(
+                err.inner(),
+                ECIESErrorImpl::TagCheckDecryptFailed |
+                    ECIESErrorImpl::TagCheckHeaderFailed |
+                    ECIESErrorImpl::TagCheckBodyFailed |
+                    ECIESErrorImpl::InvalidAuthData |
+                    ECIESErrorImpl::InvalidAckData |
+                    ECIESErrorImpl::InvalidHeader |
+                    ECIESErrorImpl::Secp256k1(_) |
+                    ECIESErrorImpl::InvalidHandshake { .. } |
+                    ECIESErrorImpl::UnreadableStream |
+                    ECIESErrorImpl::StreamTimeout
+            ),
             Self::Timeout => false,
         }
     }
